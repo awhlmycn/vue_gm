@@ -1,6 +1,6 @@
 # vue-admin
 
-> A Vue.js project
+> 这是一个gm后台系统，集成了权限设定、前后端服务器通信、axios跨域、excel导出
 
 ## Build Setup
 

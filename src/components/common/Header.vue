@@ -8,7 +8,7 @@
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 消息中心 -->
-                <div class="btn-choice">
+                <div class="btn-choice" v-if="env=='development'">
                     <span class="explain">当前服务器：</span>
                     <el-select v-model="value">
                         <el-option
@@ -33,32 +33,26 @@
             return {
                 collapse: false,
                 name: 'kilmy',
+                env : 'development',
                 serverList : [
-                    {
-                        name : '明越服务器',
-                        value : 'http://127.0.0.1'
-                    },
-                    {
-                        name : 'qa测试服',
-                        value : 'http://127.0.0.2'
-                    },
-                    {
-                        name : '正式服',
-                        value : 'http://127.0.0.3'
-                    }
+                    // {
+                    //     name : '明越服务器',
+                    //     value : 'http://127.0.0.1'
+                    // }
                 ],
                 value: ''
             }
         },
         computed:{
-            username(){
-                let username = localStorage.getItem('ms_username');
+            username() {
+                let username = this.$world.storage.getItem( 'username' );
                 return username ? username : this.name;
             }
         },
         methods:{
             loginout() {
                 this.$router.push('/login');
+                this.$world.outClear();
             },
             // 侧边栏折叠
             collapseChage(){
@@ -67,10 +61,19 @@
             },
         },
         mounted(){
+            this.env = process.env.NODE_ENV;
+            var user_server = this.$world.storage.getItem( 'server' );
+            this.serverList = user_server;
             this.value = this.serverList[0].value;
             // if(document.body.clientWidth < 500 ) {
             //     this.collapseChage();
             // }
+        },
+        watch: {
+            // 监听服务器列表选项重新设置值
+            value( newValue, oldValue ) {
+                this.$world.storage.setItem( 'cur_server', newValue );
+            }
         }
     }
 </script>
@@ -114,7 +117,7 @@
         width: 120px;
     }
     .el-select-dropdown__item{
-        font-size: 16px;
+        font-size: 12px;
     }
     .btn-loginout{
         margin-left: 10px;

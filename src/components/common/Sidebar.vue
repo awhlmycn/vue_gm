@@ -30,43 +30,12 @@
         data() {
             return {
                 collapse: false,
-                items: [
-                    // {
-                    //     icon: 'el-icon-tickets',
-                    //     index: 'table',
-                    //     title: '基础表格'
-                    // },
-                    // {
-                    //     icon: 'el-icon-date',
-                    //     index: 'form',
-                    //     title: '基本表单',
-                    // },
-                    {
-                        icon: 'el-icon-edit',
-                        index: 'titles',
-                        title: '题库管理',
-                    },
-                    {
-                        icon: 'el-icon-setting',
-                        index: 'ads',
-                        title: '广告管理',
-                    },
-                    {
-                        icon: 'el-icon-document',
-                        index: 'roles',
-                        title: '用户管理',
-                    },
-                    {
-                        icon: 'el-icon-document',
-                        index: 'pkrecord',
-                        title: 'pk管理',
-                    },
-                ]
+                items: []
             }
         },
         computed:{
             onRoutes(){
-                return this.$route.path.replace('/','');
+                // return this.$route.path.replace('/','');
             }
         },
         created(){
@@ -74,6 +43,10 @@
             bus.$on('collapse', msg => {
                 this.collapse = msg;
             })
+        },
+        mounted() {
+            var purviews = this.$world.storage.getItem( 'purview' );
+            this.items = purviews;
         }
     }
 </script>

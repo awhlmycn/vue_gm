@@ -49,56 +49,6 @@
 </template>
 
 <script>
-    var tmpData = [{
-                        "id":1,
-                        "totalTitle":5,
-                        "create_time":"2018-12-19T17:21:27.000Z",//创建时间
-                        "num":2,        //参与人数
-                        "roomEndTime":"2018-12-10T17:21:27.000Z",   //pk结束时间
-                        "type":1,               // 1. 实时pk  2 多人pk
-                        "created":"",            //创建者
-                        "pkDetails" : [{
-                            "uid":10000001,
-                            "rank":1,
-                            "point":11,
-                            "correctCount":10,
-                            "time":10,
-                            "nickname":"kilmy"
-                        },
-                        {
-                            "uid":"-100001",
-                            "rank":2,
-                            "point":10,
-                            "correctCount":10,
-                            "time":10,
-                            "nickname":"机器人"
-                        }]
-                    },
-                    {
-                        "id":2,
-                        "totalTitle":5,
-                        "create_time":"2018-12-19T17:21:27.000Z",//创建时间
-                        "num":2,        //参与人数
-                        "roomEndTime":"2018-12-20T17:21:27.000Z",   //pk结束时间
-                        "type":2,               // 1. 实时pk  2 多人pk
-                        "created":"kilmy",            //创建者
-                        "pkDetails" : [{
-                            "uid":10000001,
-                            "rank":1,
-                            "point":11,
-                            "correctCount":10,
-                            "time":10,
-                            "nickname":"kilmy"
-                        },
-                        {
-                            "uid":"-100001",
-                            "rank":2,
-                            "point":10,
-                            "correctCount":10,
-                            "time":10,
-                            "nickname":"机器人"
-                        }]
-                    }];
     export default {
         name: 'pkrecord',
         data() {
@@ -108,7 +58,7 @@
                 delVisible: false,
                 cur_page: 1,
                 page_size : 20,
-                total : 100,
+                total : 0,
                 form: {},
                 idx: -1,
                 curIndexIsDel : 0,
@@ -148,14 +98,12 @@
                 this.getData();
             },
             // 获取每页的数据
-            getData() {
-                var len = Math.floor( Math.random() * 2 );
-                this.tableData = tmpData;
-                // this.$axios.post(this.url, {
-                //     page: this.cur_page
-                // }).then((res) => {
-                //     this.tableData = res.data.list;
-                // })
+            async getData() {
+                var backData = await this.$axios.get( '/gm/pkRecordList', { page : this.cur_page, pageSize : this.page_size } );
+                if( backData.code == 200 ) {
+                    this.tableData = backData.result;
+                    this.total = backData.total;
+                }
             },
             exportExcel() {
                 this.downloadLoading = true

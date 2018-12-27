@@ -12,7 +12,7 @@
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
                 </div>
-                <p style="font-size:12px;line-height:30px;color:#999;">Tips : 用户名和密码随便填。</p>
+                <p style="font-size:12px;line-height:30px;color:#999;">Tips : 请输入正确的用户名和密码。</p>
             </el-form>
         </div>
     </div>
@@ -23,8 +23,8 @@
         data: function(){
             return {
                 ruleForm: {
-                    username: 'admin',
-                    password: '123123'
+                    username: 'mingyue',
+                    password: '111111'
                 },
                 rules: {
                     username: [
@@ -37,12 +37,27 @@
             }
         },
         methods: {
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
+            submitForm( formName ) {
+                this.$refs[formName].validate( async (valid) => {
+                    if( valid ) {
+                        var data = {
+                            username : this.ruleForm.username,
+                            password : this.ruleForm.password
+                        };
+                        var serverData = await this.$axios.post( '/gm/login', data );
+                        if( serverData.code != 200 ) {
+                            this.$message({
+                                dangerouslyUseHTMLString: true,
+                                type : 'warning',
+                                message: `<strong>${serverData.errMsg}</strong>`
+                            });
+                            return;
+                        }
+                        var result = serverData.result;
+                        this.$world.loginSetStorage( this.ruleForm.username, result );
                         this.$router.push('/');
-                    } else {
+                    }
+                    else {
                         console.log('error submit!!');
                         return false;
                     }

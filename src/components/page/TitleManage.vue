@@ -5,7 +5,8 @@
                 <el-breadcrumb-item><i class="el-icon-tickets"></i> 题库管理</el-breadcrumb-item>
             </el-breadcrumb>
             <!-- 添加搜索框 -->
-            <div class="handle-box" style="margin-left: 75%;">
+            <div class="handle-box" style="margin-left: 65%;">
+                <el-button type="primary" style="margin-right:20px;" @click="addTitle">新增</el-button>
                 <el-input v-model="select_word" placeholder="筛选题目关键词" class="handle-input mr10"></el-input>
                 <el-button type="primary">搜索</el-button>
             </div>
@@ -40,7 +41,7 @@
             </div>
         </div>
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="70%" :close-on-click-modal="false" center>
+        <el-dialog title="编辑" :visible.sync="editVisible" width="60%" height="50%":close-on-click-modal="false" center>
 			<el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="问题：">
                     <el-input v-model="form.title"></el-input>
@@ -57,31 +58,48 @@
                 <el-form-item label="D">
                     <el-input v-model="form.D"></el-input>
                 </el-form-item>
-                <el-form-item label="答案：">
-				    <el-select v-model="form.answer">
-				      	<el-option label="A" value="A"></el-option>
-				      	<el-option label="B" value="B"></el-option>
-				      	<el-option label="C" value="C"></el-option>
-				      	<el-option label="D" value="D"></el-option>
-				    </el-select>
-			 	 </el-form-item>
-			 	<el-form-item label="级别：">
-				    <el-select v-model="form.level_id">
-				      	<el-option label="初级" value="1"></el-option>
-				      	<el-option label="中级" value="2"></el-option>
-				      	<el-option label="高级" value="3"></el-option>
-				    </el-select>
-			 	</el-form-item>
-			 	<el-form-item label="产品：">
-				    <el-select v-model="form.product_type">
-				      	<el-option label="产品" value="1"></el-option>
-				      	<el-option label="非产品" value="2"></el-option>
-				    </el-select>
-			 	</el-form-item>
+                <el-form ref="form" :inline="true" :model="form" label-width="100px">
+                    <el-form-item label="答案：">
+    				    <el-select v-model="form.answer">
+    				      	<el-option label="A" value="A"></el-option>
+    				      	<el-option label="B" value="B"></el-option>
+    				      	<el-option label="C" value="C"></el-option>
+    				      	<el-option label="D" value="D"></el-option>
+    				    </el-select>
+    			 	</el-form-item>
+                    <el-form-item label="级别：">
+                        <el-select v-model="form.level_id">
+                            <el-option label="初级" value="1"></el-option>
+                            <el-option label="中级" value="2"></el-option>
+                            <el-option label="高级" value="3"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="原型：">
+                        <el-select v-model="form.types">
+                            <el-option label="单选题" value="单选题"></el-option>
+                            <el-option label="多选题" value="多选题"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="领域：">
+                        <el-input v-model="form.fileds"></el-input>
+                    </el-form-item>
+                    <el-form-item label="产品：">
+                        <el-select v-model="form.product_type">
+                            <el-option label="产品" value="1"></el-option>
+                            <el-option label="非产品" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="状态：">
+                        <el-select v-model="form.is_del">
+                            <el-option label="开启" value="0"></el-option>
+                            <el-option label="禁用" value="1"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
             </el-form>
 			<span slot="footer" class="dialog-footer">
 			   	<el-button type="primary" @click="saveEdit">确 定</el-button>
-                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button @click="cancelEdit">取 消</el-button>
             </span>
 		</el-dialog>
 
@@ -97,34 +115,6 @@
 </template>
 
 <script>
-	var tmpData = [{
-		          		"q_id":1,
-						"title":"中国成人糖尿病患病率 ---1中国成人糖尿病患病率 ---1中国成人糖尿病患病率 ---1中国成人糖尿病患病率 ---",
-						"A":"10.4%，1/3",
-						"B":"9.7%，1/2",
-						"C":"10.4%，1/2",
-						"D":"9.7%，1/3",
-						"answer":"A",
-						"level_id":1,
-						"types":"单选题",
-						"fileds":"糖尿病",
-						"product_type":"1",
-						"is_del":0,
-	        		},
-	        		{
-		          		"q_id":2,
-						"title":"我是抽白宫",
-						"A":"10.4%，1/3",
-						"B":"9.7%，1/2",
-						"C":"10.4%，1/2",
-						"D":"9.7%，1/3",
-						"answer":"A",
-						"level_id":1,
-						"types":"单选题",
-						"fileds":"糖尿病",
-						"product_type":"1",
-						"is_del":0,
-	        		}];
     export default {
         name: 'basetable',
         data() {
@@ -134,7 +124,7 @@
                 select_word: '',
                 cur_page: 1,
                 page_size : 20,
-                total : 100,
+                total : 0,
                 form: {},
                 idx: -1,
                 curIndexIsDel : 0,
@@ -177,14 +167,12 @@
                 this.getData();
             },
             // 获取每页的数据
-            getData() {
-            	var len = Math.floor( Math.random() * 2 );
-               	this.tableData = tmpData;
-                // this.$axios.post(this.url, {
-                //     page: this.cur_page
-                // }).then((res) => {
-                //     this.tableData = res.data.list;
-                // })
+            async getData() {
+                var backData = await this.$axios.get( '/gm/questionList', { page : this.cur_page, pageSize : this.page_size } );
+                if( backData.code == 200 ) {
+                    this.tableData = backData.result;
+                    this.total = backData.total;
+                }
             },
         	//修改、弹出编辑框
         	handleEdit( index, row ) {
@@ -197,11 +185,57 @@
                 if( this.form.hasOwnProperty( 'product_type' ) ) {
                 	this.form.product_type = this.form.product_type.toString();
                 }
+                if( this.form.hasOwnProperty( 'is_del' ) ) {
+                    this.form.is_del = this.form.is_del.toString();
+                }
         	},
+            // 新增加题目
+            addTitle() {
+                this.editVisible = true;
+            },
+            // 取消修改
+            cancelEdit() {
+                this.editVisible = false;
+                this.idx = -1;
+                this.form = {};
+            },
         	// 保存数据，并且发送给服务器
-        	saveEdit() {
-        		this.editVisible = false;
-        		this.tableData[ this.idx ] = Object.assign( this.tableData[ this.idx ], this.form );
+        	async saveEdit() {
+                if( this.$lele.empty( this.form ) ) {
+                    this.$message.error({ message : '没有要修改的数据'});
+                    return;
+                }
+                var alertData = {
+                    title : this.form.title,     //题目
+                    A : this.form.A,         //选项A
+                    B : this.form.B,         
+                    C : this.form.C,
+                    D : this.form.D,
+                    types : this.form.types,
+                    answer : this.form.answer,
+                    level_id : this.form.level_id,
+                    fileds : this.form.fileds,
+                    product_type : this.form.product_type,
+                    is_del : this.form.is_del
+                };
+                var backData = null;
+                // 修改信息
+                if( this.idx >= 0 ) {
+                    alertData.q_id = this.form.q_id;
+                    backData = await this.$axios.get( '/gm/modifyQuestion', alertData );
+                    if( backData.code == 200 ) {
+                        this.tableData[ this.idx ] = Object.assign( this.tableData[ this.idx ], this.form );
+                    }
+                }
+                // 新增信息
+                else{
+                    backData = await this.$axios.get( '/gm/addQuestion', alertData );
+                    if( backData.code == 200 && this.tableData.length < this.page_size ) {
+                        this.tableData.push( backData.result );
+                    }
+                }
+                this.alertSuccess( backData );
+                this.cancelEdit();
         	},
         	// 禁用弹框
         	handleDelete( index, row ) {
@@ -210,14 +244,25 @@
         		this.curIndexIsDel = this.tableData[ index ].is_del;
         	},
         	// 确认禁用
-        	deleteRow() {
+        	async deleteRow() {
         		this.delVisible = false;
         		var is_del = 0;
         		if( this.tableData[ this.idx ].is_del == 0 ) {
         			is_del = 1;
         		}
         		this.tableData[ this.idx ] = Object.assign( this.tableData[ this.idx ], { is_del : is_del } );
-        	}
+                var result = await this.$axios.get( '/gm/modifyQuestion', { q_id : this.tableData[ this.idx ].q_id, is_del : is_del } );
+                this.alertSuccess( result );
+                this.cancelEdit();
+        	},
+            // 添加成功弹框
+            alertSuccess( data ) {
+                if( data.code == 200 ) {
+                    this.$message.success({
+                        message : '成功'
+                    });
+                }
+            }
         },
         filters : {
         	setDelStatus( value ) {

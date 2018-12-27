@@ -38,34 +38,6 @@
 </template>
 
 <script>
-	var tmpData = [{
-		          		"uid":10000001,
-						"nickname":"kilmy",		//玩家名字
-						"headImgUrl":"https://pkgame.lillyadmin.cn/Images/default.png",		//玩家头像
-						"point":139,			//玩家总积分
-						"weekPoint":0,			//玩家周积分
-						"monthPoint":52,		//玩家月积分
-						"pk":26,				//玩家pk场次
-						"pkWin":4,				//玩家pk胜场
-						"winRate":15,			//胜率
-						"totalRank":1,			//总排名
-						"weekRank":4,			//周排名
-						"monthRank":1			//月排名
-	        		},
-	        		{
-		          		"uid":10000002,
-						"nickname":"lmy",		//玩家名字
-						"headImgUrl":"https://pkgame.lillyadmin.cn/Images/default.png",		//玩家头像
-						"point":139,			//玩家总积分
-						"weekPoint":0,			//玩家周积分
-						"monthPoint":52,		//玩家月积分
-						"pk":26,				//玩家pk场次
-						"pkWin":4,				//玩家pk胜场
-						"winRate":15,			//胜率
-						"totalRank":1,			//总排名
-						"weekRank":4,			//周排名
-						"monthRank":1			//月排名
-	        		}];
     export default {
         'name' :'Advertisement',
         data() {
@@ -73,7 +45,7 @@
                 select_word: '',
                 cur_page: 1,
                 page_size : 20,
-                total : 100,
+                total : 0,
 	           	tableData: []
            	}
         },
@@ -96,14 +68,12 @@
                 this.getData();
             },
             // 获取每页的数据
-            getData() {
-            	var len = Math.floor( Math.random() * 2 );
-               	this.tableData = tmpData;
-                // this.$axios.post(this.url, {
-                //     page: this.cur_page
-                // }).then((res) => {
-                //     this.tableData = res.data.list;
-                // })
+            async getData() {
+                var backData = await this.$axios.get( '/gm/roleList', { page : this.cur_page, pageSize : this.page_size } );
+                if( backData.code == 200 ) {
+                    this.tableData = backData.result;
+                    this.total = backData.total;
+                }
             },
         }
     }

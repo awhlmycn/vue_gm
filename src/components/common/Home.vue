@@ -43,6 +43,13 @@
                 }
                 this.tagsList = arr;
             })
+            // 全局监听返回来的报错
+            bus.$on('alert', msg => {
+                this.$message({
+                    message: msg,
+                    type : 'error'
+                });
+            })
         }
     }
 </script>

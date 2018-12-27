@@ -9,6 +9,34 @@ var lele = {
         if ( isNaN( tmp ) ) return 0;
         return tmp;
     },
+    //判断传入参数是否为空,等同php的empty函数
+    empty( obj ) {
+        switch( typeof obj ) {
+            case 'undefined':
+                return true;
+                break;
+            case 'string':
+                return 0 === obj.trim().length;
+            break;
+            case 'number':
+                return 0 == obj;
+            break;
+            case 'object':
+                if( null == obj ) return true;
+
+                if( obj.constructor == Array ) {
+                    return 0 == obj.length;
+                }
+                else {
+                    for( var t in obj ) {
+                        return false;
+                    }
+                    return true;
+                }
+            break;
+        }
+        return false;
+    },
     /**
      * 1.获取当前的时间
      * @param  time ：秒

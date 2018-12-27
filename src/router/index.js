@@ -35,6 +35,11 @@ export default new Router({
                     component: resolve => require(['../components/page/PkManage.vue'], resolve),
                     meta: { title: 'pk管理' }
                 },
+                {
+                    path: '/common',
+                    component: resolve => require(['../components/page/comManage.vue'], resolve),
+                    meta: { title: 'common管理' }
+                },
                 // {
                 //     path: '/table',
                 //     component: resolve => require(['../components/page/BaseTable.vue'], resolve),

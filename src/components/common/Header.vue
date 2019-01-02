@@ -8,7 +8,7 @@
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 消息中心 -->
-                <div class="btn-choice" v-if="env=='development'">
+                <div class="btn-choice" v-if="isAdmin">
                     <span class="explain">当前服务器：</span>
                     <el-select v-model="value">
                         <el-option
@@ -33,7 +33,7 @@
             return {
                 collapse: false,
                 name: 'kilmy',
-                env : 'development',
+                isAdmin : 0,
                 serverList : [
                     // {
                     //     name : '明越服务器',
@@ -61,10 +61,14 @@
             },
         },
         mounted(){
-            this.env = process.env.NODE_ENV;
+            this.isAdmin = this.$world.storage.getItem( 'is_admin' );
             var user_server = this.$world.storage.getItem( 'server' );
             this.serverList = user_server;
-            this.value = this.serverList[0].value;
+            this.value = process.env.API_ROOT;
+            var cur_server = this.$world.storage.getItem( 'cur_server' );
+            if( cur_server ) {
+                this.value = cur_server;
+            }
             // if(document.body.clientWidth < 500 ) {
             //     this.collapseChage();
             // }

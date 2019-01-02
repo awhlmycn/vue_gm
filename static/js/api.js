@@ -3,19 +3,25 @@ import axios from 'axios';
 import world from './world.js';
 
 var host = process.env.API_ROOT;
-axios.defaults.baseURL = host;
+// axios.defaults.baseURL = host;
 axios.defaults.time = 3000;
 
-// 如果是管理员权限，则可以选择服务器列表
-var is_admin = world.storage.getItem( 'is_admin' );
-console.log("is_admin", is_admin );
-if( is_admin ) {
-	var cur_server = world.storage.getItem( 'cur_server' );
-	console.log("cur_server", cur_server );
-	if( cur_server ) {
-		axios.defaults.baseURL = cur_server;
+/**
+ * 1.重定向url
+ */
+function checkUrl( url ) {
+	host = process.env.API_ROOT
+	// 如果是管理员权限，则可以选择服务器列表
+	var is_admin = world.storage.getItem( 'is_admin' );
+	if( !url.includes( 'login' ) && is_admin ) {
+		var cur_server = world.storage.getItem( 'cur_server' );
+		if( cur_server ) {
+			host = cur_server;
+		}
 	}
+	return host;
 }
+
 
 // 拦截器
 axios.interceptors.request.use( 
@@ -47,7 +53,8 @@ axios.interceptors.response.use( function ( response ) {
 
 var apiRequest = {
 	get( url, data ) {
-		return axios.get( url, { params : data } )
+		checkUrl( url );
+		return axios.get( host + url, { params : data } )
 		.then( response => {
 		    return response.data;
 		})
@@ -56,7 +63,8 @@ var apiRequest = {
 		});
 	},
 	post( url, data ) {
-		return axios.post( url, formUrl( data ) )
+		checkUrl( url );
+		return axios.post( host + url, formUrl( data ) )
 		.then( response => {
 		    return response.data;
 		})
